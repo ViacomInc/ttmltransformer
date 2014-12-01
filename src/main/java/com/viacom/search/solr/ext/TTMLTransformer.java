@@ -1,9 +1,8 @@
-package com.mtvnet.search.solr.ext;
+package com.viacom.search.solr.ext;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +30,6 @@ import org.xml.sax.SAXException;
  * 
  * 
  */
-
 
 public class TTMLTransformer extends Transformer {
 
@@ -138,8 +136,8 @@ public class TTMLTransformer extends Transformer {
 	private String formatPayload(String txt, String begin, String delim){
 		StringBuffer sb = new StringBuffer();
 		String[] words = txt.split(" ");
-		for(int i = 0; i < words.length; i++){
-			sb.append(words[i]);
+        for (String word: words) {
+			sb.append(word);
 			sb.append(delim);
 			sb.append(begin);
 			sb.append(" ");
