@@ -60,20 +60,20 @@ public class TTMLTransformer extends Transformer {
 		for (Map<String, String> fld : context.getAllEntityFields()) {
 
 			//if TTML isn't set for the field, move along.
-			String ttml_cmd = fld.get(TTML_CMD);
-			if(ttml_cmd == null)
+			String ttmlCmd = fld.get(TTML_CMD);
+			if(ttmlCmd == null)
 				continue;
 			
 			//payload or plain text?
 			boolean payloads = false;
-			if("payloads".equals(ttml_cmd)){
+			if("payloads".equals(ttmlCmd)){
 				payloads = true;
 			}
 			
 			//payloads need a delimiter. "|" is a fine choice, but who am I to judge?
-			String delim_cmd = fld.get(DELIM_CMD);
-			if(delim_cmd != null)
-				delimiter = delim_cmd;
+			String delimCmd = fld.get(DELIM_CMD);
+			if(delimCmd != null)
+				delimiter = delimCmd;
 			
 			//get the field(s) we're dealing with.
 			String column = fld.get(DataImporter.COLUMN);
