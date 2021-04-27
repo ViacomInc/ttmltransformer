@@ -142,18 +142,18 @@ public class TTMLTransformer extends Transformer {
 	}
 	
 	private String getNodeText( Node node ) {
-        String results = "";
+        StringBuilder results = new StringBuilder();
         if (node.getNodeType() == Node.TEXT_NODE) {
-        	results += node.getTextContent();
-        	if(!results.endsWith(" "))
-        		results += " ";
+        	results.append(node.getTextContent());
+        	if(results.lastIndexOf(" ")!=results.length()-1)
+        		results.append( " " );
         }
         
         if ( node.getChildNodes().getLength() > 0 ) {
         	for ( int i = 0; i < node.getChildNodes().getLength(); i++ )
-        		results += getNodeText(node.getChildNodes().item(i));
+        		results.append(getNodeText(node.getChildNodes().item(i)));
         }	
-        return results;
+        return results.toString();
     }
 	
 	private String formatPayload(String txt, String begin, String delim){
