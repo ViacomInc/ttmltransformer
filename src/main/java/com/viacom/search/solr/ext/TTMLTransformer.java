@@ -88,10 +88,12 @@ public class TTMLTransformer extends Transformer {
 			List<String> inputs = new ArrayList<>();
 			Object val = row.get(srcColumn);
 			if(val != null){
-			if(val instanceof List)
-				inputs = (List<String>) val;
-			else
-				inputs.add(String.valueOf(val));
+				if(val instanceof List){
+					inputs = (List<String>) val;
+                                } else {
+					inputs.add(String.valueOf(val));
+                                }
+                        
 				List<Object> results = new ArrayList<>();
 				for (String input : inputs) {
 					results.add(getCaptions(input, payloads, delimiter));
