@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.xml.XMLConstants;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -59,20 +60,20 @@ public class TTMLTransformer extends Transformer {
 		for (Map<String, String> fld : context.getAllEntityFields()) {
 
 			//if TTML isn't set for the field, move along.
-			String ttml_cmd = fld.get(TTML_CMD);
-			if(ttml_cmd == null)
+			String ttmlCmd = fld.get(TTML_CMD);
+			if(ttmlCmd == null)
 				continue;
 			
 			//payload or plain text?
 			boolean payloads = false;
-			if("payloads".equals(ttml_cmd)){
+			if("payloads".equals(ttmlCmd)){
 				payloads = true;
 			}
 			
 			//payloads need a delimiter. "|" is a fine choice, but who am I to judge?
-			String delim_cmd = fld.get(DELIM_CMD);
-			if(delim_cmd != null)
-				delimiter = delim_cmd;
+			String delimCmd = fld.get(DELIM_CMD);
+			if(delimCmd != null)
+				delimiter = delimCmd;
 			
 			//get the field(s) we're dealing with.
 			String column = fld.get(DataImporter.COLUMN);
@@ -84,14 +85,16 @@ public class TTMLTransformer extends Transformer {
 
 			
 			//with single-valued fields, val will be a string, and a list for multi-valued fields.
-			List<String> inputs = new ArrayList<String>();
+			List<String> inputs = new ArrayList<>();
 			Object val = row.get(srcColumn);
 			if(val != null){
-			if(val instanceof List)
-				inputs = (List<String>) val;
-			else
-				inputs.add(String.valueOf(val));
-				List<Object> results = new ArrayList<Object>();
+				if(val instanceof List){
+					inputs = (List<String>) val;
+                                } else {
+					inputs.add(String.valueOf(val));
+                                }
+                        
+				List<Object> results = new ArrayList<>();
 				for (String input : inputs) {
 					results.add(getCaptions(input, payloads, delimiter));
 				}
@@ -103,6 +106,8 @@ public class TTMLTransformer extends Transformer {
 
 	private String getCaptions(String input, boolean payloads, String delimiter) {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, ""); // Compliant
+                factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, ""); // compliant
 		DocumentBuilder builder = null;
 		try {
 			builder = factory.newDocumentBuilder();
@@ -111,45 +116,48 @@ public class TTMLTransformer extends Transformer {
 		}
 
 		Document doc = null;
-		try {
-			doc = builder.parse(new URL(input).openStream());
-		} catch (SAXException se) {
-			se.printStackTrace();
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
+                if( builder!=null ){
+			try {
+				doc = builder.parse(new URL(input).openStream());
+			} catch (SAXException se) {
+				se.printStackTrace();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+                }
 
-		StringBuffer sb = new StringBuffer();
-		//mjr: null check on doc
-		NodeList ps = doc.getElementsByTagName("p");
-		for (int i = 0; i < ps.getLength(); i++) {
-			Node p = ps.item(i);
-			String begin = ((Element)p).getAttributeNode("begin").getValue();
-			String txt = getNodeText(p);
-			if(payloads)
-				txt = formatPayload(txt, begin, delimiter);
-			sb.append(txt);
-		}
+		StringBuilder sb = new StringBuilder();
+		if( doc!=null ){
+			NodeList ps = doc.getElementsByTagName("p");
+			for (int i = 0; i < ps.getLength(); i++) {
+				Node p = ps.item(i);
+				String begin = ((Element)p).getAttributeNode("begin").getValue();
+				String txt = getNodeText(p);
+				if(payloads)
+					txt = formatPayload(txt, begin, delimiter);
+				sb.append(txt);
+			}
+                }
 		return sb.toString();
 	}
 	
 	private String getNodeText( Node node ) {
-        String results = "";
+        StringBuilder results = new StringBuilder();
         if (node.getNodeType() == Node.TEXT_NODE) {
-        	results += node.getTextContent();
-        	if(!results.endsWith(" "))
-        		results += " ";
+        	results.append(node.getTextContent());
+        	if(results.lastIndexOf(" ")!=results.length()-1)
+        		results.append( " " );
         }
         
         if ( node.getChildNodes().getLength() > 0 ) {
         	for ( int i = 0; i < node.getChildNodes().getLength(); i++ )
-        		results += getNodeText(node.getChildNodes().item(i));
+        		results.append(getNodeText(node.getChildNodes().item(i)));
         }	
-        return results;
+        return results.toString();
     }
 	
 	private String formatPayload(String txt, String begin, String delim){
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		String[] words = txt.split(" ");
         for (String word: words) {
 			sb.append(word);
