@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.xml.XMLConstants;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -103,6 +104,8 @@ public class TTMLTransformer extends Transformer {
 
 	private String getCaptions(String input, boolean payloads, String delimiter) {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, ""); // Compliant
+                factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, ""); // compliant
 		DocumentBuilder builder = null;
 		try {
 			builder = factory.newDocumentBuilder();
