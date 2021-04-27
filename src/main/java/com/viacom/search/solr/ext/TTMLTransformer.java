@@ -114,25 +114,28 @@ public class TTMLTransformer extends Transformer {
 		}
 
 		Document doc = null;
-		try {
-			doc = builder.parse(new URL(input).openStream());
-		} catch (SAXException se) {
-			se.printStackTrace();
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
+                if( builder!=null ){
+			try {
+				doc = builder.parse(new URL(input).openStream());
+			} catch (SAXException se) {
+				se.printStackTrace();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+                }
 
 		StringBuilder sb = new StringBuilder();
-		//mjr: null check on doc
-		NodeList ps = doc.getElementsByTagName("p");
-		for (int i = 0; i < ps.getLength(); i++) {
-			Node p = ps.item(i);
-			String begin = ((Element)p).getAttributeNode("begin").getValue();
-			String txt = getNodeText(p);
-			if(payloads)
-				txt = formatPayload(txt, begin, delimiter);
-			sb.append(txt);
-		}
+		if( doc!=null ){
+			NodeList ps = doc.getElementsByTagName("p");
+			for (int i = 0; i < ps.getLength(); i++) {
+				Node p = ps.item(i);
+				String begin = ((Element)p).getAttributeNode("begin").getValue();
+				String txt = getNodeText(p);
+				if(payloads)
+					txt = formatPayload(txt, begin, delimiter);
+				sb.append(txt);
+			}
+                }
 		return sb.toString();
 	}
 	
