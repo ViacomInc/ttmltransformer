@@ -122,7 +122,7 @@ public class TTMLTransformer extends Transformer {
 			ioe.printStackTrace();
 		}
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		//mjr: null check on doc
 		NodeList ps = doc.getElementsByTagName("p");
 		for (int i = 0; i < ps.getLength(); i++) {
@@ -152,7 +152,7 @@ public class TTMLTransformer extends Transformer {
     }
 	
 	private String formatPayload(String txt, String begin, String delim){
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		String[] words = txt.split(" ");
         for (String word: words) {
 			sb.append(word);
