@@ -85,14 +85,14 @@ public class TTMLTransformer extends Transformer {
 
 			
 			//with single-valued fields, val will be a string, and a list for multi-valued fields.
-			List<String> inputs = new ArrayList<String>();
+			List<String> inputs = new ArrayList<>();
 			Object val = row.get(srcColumn);
 			if(val != null){
 			if(val instanceof List)
 				inputs = (List<String>) val;
 			else
 				inputs.add(String.valueOf(val));
-				List<Object> results = new ArrayList<Object>();
+				List<Object> results = new ArrayList<>();
 				for (String input : inputs) {
 					results.add(getCaptions(input, payloads, delimiter));
 				}
